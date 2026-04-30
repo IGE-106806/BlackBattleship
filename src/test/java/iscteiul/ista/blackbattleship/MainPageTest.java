@@ -6,6 +6,7 @@ import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.Duration;
 import static com.codeborne.selenide.Condition.attribute;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
@@ -25,6 +26,14 @@ public class MainPageTest {
     @BeforeEach
     public void setUp() {
         open("https://www.jetbrains.com/");
+        // O banner de cookies (CookieHub) carrega de forma assíncrona e bloqueia cliques.
+        // Aguarda que o container apareça no DOM e depois remove-o via JavaScript,
+        // pois o botão de aceitar pode estar em shadow DOM inacessível ao Selenide.
+        Selenide.sleep(2000);
+        executeJavaScript(
+            "var el = document.querySelector('.ch2-container');" +
+            "if (el) el.remove();"
+        );
     }
 
     @Test
@@ -45,6 +54,7 @@ public class MainPageTest {
         mainPage.toolsMenu.shouldBe(visible).click();
         Thread.sleep(1000);
 
+        // Aguarda que o submenu do menu "Products" apareça
         $("div[data-test='main-submenu']").shouldBe(visible);
     }
 
@@ -55,6 +65,7 @@ public class MainPageTest {
         mainPage.findYourToolsButton.shouldBe(visible).click(); // suggestion-link sobrepõe suggestion-action
         Thread.sleep(2000);
 
+        // Valida que a página de produtos carregou corretamente
         $("#products-page").shouldBe(visible);
         assertEquals("All Developer Tools and Products by JetBrains", Selenide.title());
     }
