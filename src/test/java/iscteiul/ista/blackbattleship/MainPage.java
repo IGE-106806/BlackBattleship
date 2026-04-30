@@ -6,8 +6,12 @@ import static com.codeborne.selenide.Selenide.$x;
 
 // page_url = https://www.jetbrains.com/
 public class MainPage {
-  public SelenideElement seeDeveloperToolsButton = $x("//*[@data-test-marker='Developer Tools']");
-  public SelenideElement findYourToolsButton = $x("//*[@data-test='suggestion-action']");
-  public SelenideElement toolsMenu = $x("//div[@data-test='main-menu-item' and @data-test-marker = 'Developer Tools']");
+  // O menu "Developer Tools" passou a chamar-se "Products" no site atual
+  public SelenideElement seeDeveloperToolsButton = $x("//div[@data-test='main-menu-item' and @data-test-marker='Products']");
+  // Link "Find your tool" dentro do submenu de Products
+  public SelenideElement findYourToolsButton = $("[data-test='suggestion-link']");
+  // Item "Products" no menu principal
+  public SelenideElement toolsMenu = $x("//div[@data-test='main-menu-item' and @data-test-marker='Products']");
+  // Botão de pesquisa no header
   public SelenideElement searchButton = $("[data-test='site-header-search-action']");
 }
