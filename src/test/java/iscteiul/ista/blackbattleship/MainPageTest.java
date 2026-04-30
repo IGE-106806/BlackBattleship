@@ -14,13 +14,17 @@ import static com.codeborne.selenide.Selenide.*;
 public class MainPageTest {
     MainPage mainPage = new MainPage();
 
-@BeforeAll    public static void setUpAll() {
+    @BeforeAll
+    public static void setUpAll() {
         Configuration.browserSize = "1280x800";
-        Configuration.timeout = 8000; // aumenta o timeout global para 8 segundos
+        Configuration.timeout = 10000;
+        Configuration.pageLoadTimeout = 60000;
+        Configuration.pageLoadStrategy = "eager";
         SelenideLogger.addListener("allure", new AllureSelenide());
     }
 
-@BeforeEach    public void setUp() {
+    @BeforeEach
+    public void setUp() {
         open("https://www.jetbrains.com/");
         // O banner de cookies (CookieHub) carrega de forma assíncrona e bloqueia cliques.
         // Aguarda que o container apareça no DOM e depois remove-o via JavaScript,
@@ -33,34 +37,33 @@ public class MainPageTest {
     }
 
     @Test
-    public void search() {
-        mainPage.searchButton.click();
+    public void search() throws InterruptedException {
+        mainPage.searchButton.shouldBe(visible).click();
+        Thread.sleep(1000);
 
-        // O seletor do input mudou de 'search-input' para 'input__inner'
-        $("[data-test='input__inner']").shouldBe(visible);
-        $("[data-test='input__inner']").sendKeys("Selenium");
+        $("[data-test-id='search-input']").shouldBe(visible).sendKeys("Selenium");
+        Thread.sleep(500);
+        $("button[data-test='full-search-button']").click();
+        Thread.sleep(2000);
 
-        // Verifica que o campo de pesquisa contém o texto introduzido
-        // (pressionar Enter navega para outra página e limpa o campo)
-        $("[data-test='input__inner']").shouldHave(attribute("value", "Selenium"));
+        $("[data-test-id='search-input']").shouldHave(attribute("value", "Selenium"));
     }
 
     @Test
-    public void toolsMenu() {
-        mainPage.toolsMenu.click();
+    public void toolsMenu() throws InterruptedException {
+        mainPage.toolsMenu.shouldBe(visible).click();
+        Thread.sleep(1000);
 
         // Aguarda que o submenu do menu "Products" apareça
         $("div[data-test='main-submenu']").shouldBe(visible);
     }
 
     @Test
-    public void navigationToAllTools() {
-        // Abre o submenu de Products (era "Developer Tools" na versão anterior)
-        mainPage.seeDeveloperToolsButton.click();
-
-        // Aguarda que o botão "Find your tool" fique visível e clica
-        mainPage.findYourToolsButton.shouldBe(visible);
-        mainPage.findYourToolsButton.click();
+    public void navigationToAllTools() throws InterruptedException {
+        mainPage.seeDeveloperToolsButton.shouldBe(visible).click();
+        Thread.sleep(1000);
+        mainPage.findYourToolsButton.shouldBe(visible).click(); // suggestion-link sobrepõe suggestion-action
+        Thread.sleep(2000);
 
         // Valida que a página de produtos carregou corretamente
         $("#products-page").shouldBe(visible);
