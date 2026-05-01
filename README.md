@@ -14,7 +14,7 @@
 | US3 | Como jogador, quero criar uma nova partida para poder desafiar um amigo. | Alta | Feito 94334 | 
 | US4 | Como jogador, quero jogar contra um robô para praticar sem precisar de um adversário humano. | Alta | Feito 94334 | 
 | US5 | Como jogador, quero receber um link de convite para partilhar com o meu adversário. | Média | 112949 |
-| US6 | Como jogador, quero colocar os meus navios no tabuleiro antes de iniciar a batalha. | Alta |
+| US6 | Como jogador, quero colocar os meus navios no tabuleiro antes de iniciar a batalha. | Alta | Feito 106806
 | US7 | Como jogador, quero disparar sobre o tabuleiro adversário para tentar afundar os seus navios. | Alta |
 | US8 | Como jogador, quero ver as regras do jogo para perceber como jogar. | Média | Feito 94334 | 
 | US9 | Como jogador, quero trocar mensagens de chat com o meu adversário durante a partida. | Baixa |
