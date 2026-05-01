@@ -36,6 +36,7 @@ public class BattleshipPage {
     public SelenideElement battleshipOption = $x("//mat-option[contains(.,'Battleship') or contains(.,'battleship')]");
 
     // US3/US4 – Botão "Continue" nos modais
+<<<<<<< BlackBox_106806
     public SelenideElement continueButton = $x("//mat-dialog-container//button[contains(.,'Continue')]");
 
     // US6 – Tabuleiro de colocação de navios (fase de setup)
@@ -50,4 +51,8 @@ public class BattleshipPage {
     // US10 – Resultado final da partida
     public SelenideElement gameResultScreen = $x("//*[contains(@class,'result') or contains(@class,'winner') or contains(@class,'game-over') or contains(@class,'victory') or contains(@class,'end')]");
     public SelenideElement winnerText = $x("//*[contains(text(),'win') or contains(text(),'Win') or contains(text(),'lose') or contains(text(),'Victory') or contains(text(),'Game over')]");
+=======
+    // Usa contains(.) em vez de contains(text()) porque Angular Material coloca o texto num <span> filho
+    public SelenideElement continueButton = $x("//mat-dialog-container//button[contains(.,'Continue')]");
+>>>>>>> main
 }

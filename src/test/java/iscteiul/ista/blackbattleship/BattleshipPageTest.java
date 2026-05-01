@@ -28,6 +28,11 @@ public class BattleshipPageTest {
         open("https://papergames.io/en/battleship");
         Selenide.sleep(4000);
         executeJavaScript(
+        // O banner de cookies do papergames usa a framework Fides (prefixo fc-)
+        // Aguarda que o banner carregue completamente antes de o remover
+        Selenide.sleep(4000);
+        executeJavaScript(
+                // Esconde e remove todos os elementos com classe fc- (cookie banner Fides)
                 "document.querySelectorAll('[class]').forEach(function(el) {" +
                         "    var cls = typeof el.className === 'string' ? el.className : '';" +
                         "    if (cls.indexOf('fc-') >= 0) {" +
@@ -134,11 +139,14 @@ public class BattleshipPageTest {
         battleshipPage.playWithFriendButton.shouldBe(visible).click();
         Selenide.sleep(1500);
 
+        // Modal "Who are you?" com input de nickname deve aparecer (pelo menos na primeira sessão)
+        // Se sessão estiver guardada, este passo é saltado
         if (battleshipPage.usernameInput.exists()) {
             battleshipPage.usernameInput.shouldBe(visible);
             battleshipPage.usernameInput.setValue("Pedro123");
             Selenide.sleep(500);
 
+            // Verifica que o valor foi inserido corretamente no input
             String valorInserido = battleshipPage.usernameInput.getValue();
             Assertions.assertEquals("Pedro123", valorInserido,
                     "O nickname inserido deve ser 'Pedro123'");
@@ -146,6 +154,7 @@ public class BattleshipPageTest {
             battleshipPage.continueButton.shouldBe(visible).click();
             Selenide.sleep(1500);
         } else {
+            // Sessão já tem nickname guardado - o teste passa com mensagem informativa
             System.out.println("Sessão já tem nickname guardado, modal não apareceu.");
         }
     }
@@ -175,12 +184,14 @@ public class BattleshipPageTest {
             Selenide.sleep(2500);
         }
 
+        // Após criar a partida, a URL do lobby é o próprio link de convite
         String urlLobby = WebDriverRunner.url();
         Assertions.assertTrue(
                 urlLobby.contains("/battleship/") || urlLobby.matches(".*/[a-zA-Z0-9-]{6,}.*"),
                 "A URL do lobby deve conter um identificador único (link de convite). URL: " + urlLobby
         );
 
+        // Verifica também que existe algum elemento visível relacionado com partilha/convite
         boolean temElementoConvite =
                 $x("//*[contains(text(),'Invite') or contains(text(),'invite') " +
                         "or contains(text(),'Share') or contains(text(),'share') " +
@@ -193,6 +204,14 @@ public class BattleshipPageTest {
     // US13 – Como jogador, quero escolher quem começa o jogo
     @Test
     public void us13_escolherQuemComecaJogo() {
+    // US13 – Como jogador, quero escolher quem começa o jogo (Custom options no Play vs robot)
+    @Test
+    public void us13_escolherQuemComecaJogo() {
+        // A engrenagem é um elemento clicável SEPARADO ao lado do texto "Play vs robot",
+        // dentro do mesmo cartão. Usar JS para localizar todos os ícones de engrenagem
+        // e clicar no que está dentro do cartão que contém "Play vs robot".
+        // A engrenagem é um <button mat-icon-button> ANINHADO DENTRO do botão "Play vs robot".
+        // Localiza o botão principal pelo texto e depois clica no botão interior com fa-gear.
         Object clicado = executeJavaScript(
                 "var botoes = document.querySelectorAll('button');" +
                         "for (var i = 0; i < botoes.length; i++) {" +
@@ -208,18 +227,23 @@ public class BattleshipPageTest {
                 "Não foi possível encontrar/clicar no ícone de engrenagem do 'Play vs robot'");
         Selenide.sleep(1500);
 
+        // Clica em "Custom options" no menu que abriu
         $x("//*[contains(text(),'Custom options') or contains(text(),'Custom') or contains(text(),'Opções')]")
                 .shouldBe(visible).click();
         Selenide.sleep(1500);
 
+        // Abre o dropdown DA SECÇÃO "Who plays first?" (não confundir com o primeiro dropdown "Game")
+        // Localiza o label "Who plays first?" e o mat-select que vem logo a seguir
         $x("(//*[contains(text(),'Who plays first')]/following::mat-select)[1]")
                 .shouldBe(visible).click();
         Selenide.sleep(1000);
 
+        // Seleciona a opção "I play first" no painel de opções aberto
         $x("//mat-option[contains(.,'I start first') or contains(.,'start first')]")
                 .shouldBe(visible).click();
         Selenide.sleep(1000);
 
+        // Confirma/guarda clicando em "Save settings"
         $x("//button[contains(.,'Save settings') or contains(.,'Save') " +
                 "or contains(.,'Apply') or contains(.,'Guardar')]")
                 .shouldBe(visible).click();
@@ -229,6 +253,8 @@ public class BattleshipPageTest {
     // US16 – Como jogador, quero alterar o idioma da interface
     @Test
     public void us16_alterarIdioma() {
+        // Abre o menu de Settings (ícone de engrenagem no canto superior esquerdo)
+        // O botão tem o atributo aria-describedby a apontar para um tooltip com texto "Settings"
         executeJavaScript(
                 "var tooltips = document.querySelectorAll('[role=tooltip]');" +
                         "for (var i = 0; i < tooltips.length; i++) {" +
@@ -244,11 +270,17 @@ public class BattleshipPageTest {
         $x("//*[normalize-space(text())='Language']").shouldBe(visible).click();
         Selenide.sleep(1000);
 
+        // Clica no item "Language" dentro do diálogo de Settings
+        $x("//*[normalize-space(text())='Language']").shouldBe(visible).click();
+        Selenide.sleep(1000);
+
+        // Clica na opção Português (Portuguese / Português / pt)
         $x("//*[contains(text(),'Português') or contains(text(),'Portuguese') " +
                 "or normalize-space(text())='PT' or normalize-space(text())='pt']")
                 .shouldBe(visible).click();
         Selenide.sleep(2500);
 
+        // Após mudar idioma, a URL deve conter /pt/ ou o conteúdo deve estar em PT
         String url = WebDriverRunner.url();
         boolean urlMudou = url.contains("/pt/") || url.contains("/pt-");
 
