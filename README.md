@@ -2,6 +2,7 @@
 
 ## Identificação do Grupo
 - José Caldeira
+- Alexandre Mira
 
 ---
 
@@ -19,9 +20,9 @@
 | US8 | Como jogador, quero ver as regras do jogo para perceber como jogar. | Média | Feito 94334 | 
 | US9 | Como jogador, quero trocar mensagens de chat com o meu adversário durante a partida. | Baixa | Feito 106806
 | US10 | Como jogador, quero ver o resultado final da partida para saber quem ganhou. | Alta | Feito 106806
-| US11 | Como organizador, quero criar um torneio para organizar um campeonato entre vários jogadores. | Baixa |
-| US12 | Como jogador, quero iniciar sessão com a minha conta para guardar o meu histórico de partidas. | Média |
+| US11 | Como organizador, quero criar um torneio para organizar um campeonato entre vários jogadores. | Baixa |123015
+| US12 | Como jogador, quero iniciar sessão com a minha conta para guardar o meu histórico de partidas. | Média |123015
 | US13 | Como jogador, quero escolher que começo a jogar primeiro face ao robot. | Média | 112949 |
-| US14 | Como jogador, quero ver o histórico das minhas partidas anteriores para acompanhar a minha evolução. | Baixa |
-| US15 | Como jogador, quero partilhar o resultado da partida nas redes sociais para desafiar os meus amigos. | Baixa |
+| US14 | Como jogador, quero ver o histórico das minhas partidas anteriores para acompanhar a minha evolução. | Baixa |123015
+| US15 | Como jogador, quero partilhar o resultado da partida nas redes sociais para desafiar os meus amigos. | Baixa |123015
 | US16 | Como jogador, quero alterar o idioma da interface para jogar na minha língua preferida. | Baixa | 112949 |
