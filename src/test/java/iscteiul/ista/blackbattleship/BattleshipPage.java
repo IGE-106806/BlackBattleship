@@ -36,6 +36,23 @@ public class BattleshipPage {
     public SelenideElement battleshipOption = $x("//mat-option[contains(.,'Battleship') or contains(.,'battleship')]");
 
     // US3/US4 – Botão "Continue" nos modais
+<<<<<<< BlackBox_106806
+    public SelenideElement continueButton = $x("//mat-dialog-container//button[contains(.,'Continue')]");
+
+    // US6 – Tabuleiro de colocação de navios (fase de setup)
+    public SelenideElement autoPlaceButton = $x("//button[contains(.,'Random') or contains(.,'Auto') or contains(.,'Shuffle') or contains(.,'random') or contains(.,'Randomize')]");
+    public SelenideElement readyButton = $x("//button[contains(.,'Ready') or contains(.,'Start battle') or contains(.,'Confirm') or contains(.,'Play')]");
+
+    // US9 – Chat durante a partida
+    public SelenideElement chatInput = $("input[placeholder*='message'], textarea[placeholder*='message']");
+    public SelenideElement chatSendButton = $x("//button[contains(@class,'send') or contains(.,'Send') or contains(.,'Enviar')]");
+    public SelenideElement chatMessageList = $x("//*[contains(@class,'message') or contains(@class,'chat-history') or contains(@class,'messages')]");
+
+    // US10 – Resultado final da partida
+    public SelenideElement gameResultScreen = $x("//*[contains(@class,'result') or contains(@class,'winner') or contains(@class,'game-over') or contains(@class,'victory') or contains(@class,'end')]");
+    public SelenideElement winnerText = $x("//*[contains(text(),'win') or contains(text(),'Win') or contains(text(),'lose') or contains(text(),'Victory') or contains(text(),'Game over')]");
+=======
     // Usa contains(.) em vez de contains(text()) porque Angular Material coloca o texto num <span> filho
     public SelenideElement continueButton = $x("//mat-dialog-container//button[contains(.,'Continue')]");
+>>>>>>> main
 }

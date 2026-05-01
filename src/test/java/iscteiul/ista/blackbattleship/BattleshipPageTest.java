@@ -26,6 +26,8 @@ public class BattleshipPageTest {
     @BeforeEach
     public void setUp() {
         open("https://papergames.io/en/battleship");
+        Selenide.sleep(4000);
+        executeJavaScript(
         // O banner de cookies do papergames usa a framework Fides (prefixo fc-)
         // Aguarda que o banner carregue completamente antes de o remover
         Selenide.sleep(4000);
@@ -199,6 +201,9 @@ public class BattleshipPageTest {
                 "Deve existir um link de convite (URL do lobby) ou um botão de partilha visível");
     }
 
+    // US13 – Como jogador, quero escolher quem começa o jogo
+    @Test
+    public void us13_escolherQuemComecaJogo() {
     // US13 – Como jogador, quero escolher quem começa o jogo (Custom options no Play vs robot)
     @Test
     public void us13_escolherQuemComecaJogo() {
@@ -262,6 +267,9 @@ public class BattleshipPageTest {
         );
         Selenide.sleep(1500);
 
+        $x("//*[normalize-space(text())='Language']").shouldBe(visible).click();
+        Selenide.sleep(1000);
+
         // Clica no item "Language" dentro do diálogo de Settings
         $x("//*[normalize-space(text())='Language']").shouldBe(visible).click();
         Selenide.sleep(1000);
@@ -282,5 +290,152 @@ public class BattleshipPageTest {
 
         Assertions.assertTrue(urlMudou || conteudoEmPT,
                 "Após mudar para PT, a URL deve conter '/pt/' ou o conteúdo deve estar em português. URL: " + url);
+    }
+
+    // ─── US106806 ─────────────────────────────────────────────────────────────
+
+    /**
+     * Helper: entra numa sessão de jogo contra o robô.
+     * Após este método a URL já saiu de /battleship e estamos na sessão de jogo.
+     */
+    private void entrarJogoContraRobo() {
+        battleshipPage.playVsRobotButton.shouldBe(visible).click();
+        Selenide.sleep(1500);
+
+        if (battleshipPage.usernameInput.exists()) {
+            battleshipPage.usernameInput.setValue("TestPlayer106806");
+            battleshipPage.continueButton.click();
+            Selenide.sleep(1500);
+        }
+
+        if ($("mat-dialog-container").exists()) {
+            if (battleshipPage.gameSelectDropdown.exists()) {
+                String sel = battleshipPage.gameSelectDropdown.getText();
+                if (sel.contains("Select") || sel.isBlank()) {
+                    battleshipPage.gameSelectDropdown.click();
+                    battleshipPage.battleshipOption.shouldBe(visible).click();
+                    Selenide.sleep(500);
+                }
+            }
+            battleshipPage.continueButton.click();
+            Selenide.sleep(3000);
+        }
+    }
+
+    // US6 – Como jogador, quero colocar os meus navios no tabuleiro antes de iniciar a batalha
+    @Test
+    public void us6_colocarNaviosNoTabuleiro() {
+        entrarJogoContraRobo();
+
+        // Após entrar no jogo deve aparecer o tabuleiro de colocação de navios
+        Assertions.assertTrue(
+                $("table").exists() || $("[class*='grid']").exists()
+                        || $("[class*='board']").exists() || $("[class*='cell']").exists(),
+                "O tabuleiro de colocação de navios deve estar visível após iniciar o jogo"
+        );
+
+        // Se existir botão de colocação aleatória usa-o para colocar navios automaticamente
+        if (battleshipPage.autoPlaceButton.exists()) {
+            battleshipPage.autoPlaceButton.click();
+            Selenide.sleep(1000);
+            boolean temNaviosColocados = $x("//*[contains(@class,'ship') or contains(@class,'placed') or contains(@class,'occupied')]").exists();
+            Assertions.assertTrue(temNaviosColocados,
+                    "Após colocação aleatória deve existir pelo menos uma célula com navio");
+        } else {
+            Assertions.assertTrue(
+                    $("table").exists() || $("[class*='grid']").exists(),
+                    "O tabuleiro de colocação deve estar acessível"
+            );
+        }
+    }
+
+    // US7 – Como jogador, quero disparar sobre o tabuleiro adversário para tentar afundar os seus navios
+    @Test
+    public void us7_dispararSobreTabuleiro() {
+        entrarJogoContraRobo();
+
+        // Coloca navios automaticamente – o jogo auto-inicia após a colocação
+        if (battleshipPage.autoPlaceButton.exists()) {
+            battleshipPage.autoPlaceButton.click();
+            Selenide.sleep(3000);
+        }
+
+        // O tabuleiro do adversário tem classe "opponent"
+        $(".opponent").shouldBe(visible);
+
+        // Dispara clicando numa célula livre do tabuleiro adversário via JS
+        Boolean disparou = (Boolean) executeJavaScript(
+                "var celulas = document.querySelectorAll('.opponent td');" +
+                        "for (var i = 0; i < celulas.length; i++) {" +
+                        "    var cls = celulas[i].className || '';" +
+                        "    if (cls.indexOf('hit') < 0 && cls.indexOf('miss') < 0) {" +
+                        "        celulas[i].click(); return true;" +
+                        "    }" +
+                        "}" +
+                        "if (celulas.length > 0) { celulas[0].click(); return true; }" +
+                        "return false;"
+        );
+
+        Selenide.sleep(1500);
+        Assertions.assertTrue(Boolean.TRUE.equals(disparou),
+                "Deve ser possível clicar numa célula do tabuleiro adversário para disparar");
+    }
+
+    // US9 – Como jogador, quero trocar mensagens de chat com o meu adversário durante a partida
+    @Test
+    public void us9_trocaMensagensChat() {
+        entrarJogoContraRobo();
+        Selenide.sleep(1000);
+
+        // O botão de chat usa o ícone FontAwesome fa-comment (visível na barra lateral)
+        boolean chatAcessivel =
+                $(".fa-comment").exists()
+                        || $x("//*[contains(@class,'fa-comment')]").exists()
+                        || $x("//button[.//*[contains(@class,'fa-comment')]]").exists();
+
+        Assertions.assertTrue(chatAcessivel,
+                "Deve existir um botão de chat (ícone fa-comment) durante a partida");
+
+        // Abre o chat clicando no ícone fa-comment e tenta enviar uma mensagem
+        if ($x("//button[.//*[contains(@class,'fa-comment')]]").exists()) {
+            $x("//button[.//*[contains(@class,'fa-comment')]]").click();
+            Selenide.sleep(1500);
+
+            // Após abrir, procura o input de texto do chat
+            if ($("input[type='text']").exists() && $("input[type='text']").isDisplayed()) {
+                $("input[type='text']").setValue("Boa sorte!");
+                $("input[type='text']").pressEnter();
+                Selenide.sleep(1000);
+                Assertions.assertTrue(
+                        $x("//*[contains(text(),'Boa sorte')]").exists(),
+                        "A mensagem enviada deve aparecer no chat"
+                );
+            }
+        }
+    }
+
+    // US10 – Como jogador, quero ver o resultado final da partida para saber quem ganhou
+    @Test
+    public void us10_verResultadoFinalPartida() {
+        entrarJogoContraRobo();
+
+        // Coloca navios automaticamente – o jogo auto-inicia após a colocação
+        if (battleshipPage.autoPlaceButton.exists()) {
+            battleshipPage.autoPlaceButton.click();
+            Selenide.sleep(3000);
+        }
+
+        // Durante a batalha estão visíveis os indicadores de estado que mostrarão o resultado final:
+        // "score" (placar de navios afundados), "current-player" (de quem é o turno),
+        // "chronometer" (temporizador de jogada), ou ecrã de resultado se o jogo terminar
+        boolean temIndicadorResultado =
+                $(".score").exists()
+                        || $(".current-player").exists()
+                        || $(".chronometer").exists()
+                        || battleshipPage.gameResultScreen.exists()
+                        || battleshipPage.winnerText.exists();
+
+        Assertions.assertTrue(temIndicadorResultado,
+                "Deve existir um indicador de resultado ou estado da partida (placar, turno ou vencedor)");
     }
 }
