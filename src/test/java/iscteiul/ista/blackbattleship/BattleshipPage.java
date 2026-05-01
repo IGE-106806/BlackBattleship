@@ -38,4 +38,21 @@ public class BattleshipPage {
     // US3/US4 – Botão "Continue" nos modais
     // Usa contains(.) em vez de contains(text()) porque Angular Material coloca o texto num <span> filho
     public SelenideElement continueButton = $x("//mat-dialog-container//button[contains(.,'Continue')]");
+
+    // US6 – Tabuleiro de colocação de navios (fase de setup)
+    public SelenideElement placementBoard = $x("//*[contains(@class,'placement') or contains(@class,'setup') or contains(@class,'prepare') or contains(@class,'fleet')]");
+    public SelenideElement autoPlaceButton = $x("//button[contains(.,'Random') or contains(.,'Auto') or contains(.,'Shuffle') or contains(.,'random') or contains(.,'Randomize')]");
+    public SelenideElement readyButton = $x("//button[contains(.,'Ready') or contains(.,'Start battle') or contains(.,'Confirm') or contains(.,'Play')]");
+
+    // US7 – Tabuleiro adversário para disparar
+    public SelenideElement opponentBoardCell = $x("(//td[contains(@class,'enemy') or contains(@class,'opponent') or contains(@class,'attack')])[1]");
+
+    // US9 – Chat durante a partida
+    public SelenideElement chatInput = $x("//input[contains(@placeholder,'message') or contains(@placeholder,'Message') or contains(@placeholder,'chat')] | //textarea[contains(@placeholder,'message')]");
+    public SelenideElement chatSendButton = $x("//button[contains(@class,'send') or contains(.,'Send') or contains(.,'Enviar')]");
+    public SelenideElement chatMessageList = $x("//*[contains(@class,'message') or contains(@class,'chat-history') or contains(@class,'messages')]");
+
+    // US10 – Resultado final da partida
+    public SelenideElement gameResultScreen = $x("//*[contains(@class,'result') or contains(@class,'winner') or contains(@class,'game-over') or contains(@class,'victory') or contains(@class,'end')]");
+    public SelenideElement winnerText = $x("//*[contains(text(),'win') or contains(text(),'Win') or contains(text(),'lose') or contains(text(),'Victory') or contains(text(),'Game over') or contains(text(),'You') and contains(text(),'!')]");
 }

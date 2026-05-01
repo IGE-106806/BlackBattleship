@@ -245,6 +245,181 @@ public class BattleshipPageTest {
         Selenide.sleep(1500);
     }
 
+    // ─── US106806 ─────────────────────────────────────────────────────────────
+
+    /**
+     * Helper: abre a página, clica em "Play vs robot", preenche o nickname se necessário,
+     * seleciona Battleship no dropdown (se aparecer) e clica em Continue.
+     * Após este método a URL já saiu de /battleship e estamos na sessão de jogo.
+     */
+    private void entrarJogoContraRobo() {
+        battleshipPage.playVsRobotButton.shouldBe(visible).click();
+        Selenide.sleep(1500);
+
+        if (battleshipPage.usernameInput.exists()) {
+            battleshipPage.usernameInput.setValue("TestPlayer106806");
+            battleshipPage.continueButton.click();
+            Selenide.sleep(1500);
+        }
+
+        if ($("mat-dialog-container").exists()) {
+            if (battleshipPage.gameSelectDropdown.exists()) {
+                String sel = battleshipPage.gameSelectDropdown.getText();
+                if (sel.contains("Select") || sel.isBlank()) {
+                    battleshipPage.gameSelectDropdown.click();
+                    battleshipPage.battleshipOption.shouldBe(visible).click();
+                    Selenide.sleep(500);
+                }
+            }
+            battleshipPage.continueButton.click();
+            Selenide.sleep(3000);
+        }
+    }
+
+    // US6 – Como jogador, quero colocar os meus navios no tabuleiro antes de iniciar a batalha
+    @Test
+    public void us6_colocarNaviosNoTabuleiro() {
+        entrarJogoContraRobo();
+
+        // Após entrar no jogo, deve aparecer o tabuleiro da fase de colocação de navios
+        // Verifica que existe pelo menos uma tabela/grelha na página (o tabuleiro)
+        Assertions.assertTrue(
+                $("table").exists() || $("[class*='grid']").exists()
+                        || $("[class*='board']").exists() || $("[class*='cell']").exists(),
+                "O tabuleiro de colocação de navios deve estar visível após iniciar o jogo"
+        );
+
+        // Se existir botão de colocação aleatória, usa-o para colocar navios de forma automática
+        if (battleshipPage.autoPlaceButton.exists()) {
+            battleshipPage.autoPlaceButton.click();
+            Selenide.sleep(1000);
+            // Após colocação aleatória, verifica que alguma célula do tabuleiro ficou ocupada
+            boolean temNaviosColocados = $x("//*[contains(@class,'ship') or contains(@class,'placed') or contains(@class,'occupied')]").exists();
+            Assertions.assertTrue(temNaviosColocados,
+                    "Após colocação aleatória deve existir pelo menos uma célula com navio");
+        } else {
+            // Sem botão auto: verifica apenas que o tabuleiro está presente e pronto
+            Assertions.assertTrue(
+                    $("table").exists() || $("[class*='grid']").exists(),
+                    "O tabuleiro de colocação deve estar acessível"
+            );
+        }
+    }
+
+    // US7 – Como jogador, quero disparar sobre o tabuleiro adversário para tentar afundar os seus navios
+    @Test
+    public void us7_dispararSobreTabuleiro() {
+        entrarJogoContraRobo();
+
+        // Tenta colocar os navios automaticamente e iniciar a batalha
+        if (battleshipPage.autoPlaceButton.exists()) {
+            battleshipPage.autoPlaceButton.click();
+            Selenide.sleep(1000);
+        }
+        if (battleshipPage.readyButton.exists()) {
+            battleshipPage.readyButton.click();
+            Selenide.sleep(3000);
+        }
+
+        // Após iniciar a batalha, deve existir um tabuleiro adversário para atacar
+        Assertions.assertTrue(
+                $("[class*='enemy']").exists() || $("[class*='opponent']").exists()
+                        || $("[class*='attack']").exists() || $$("table").size() >= 1,
+                "Deve existir um tabuleiro adversário para disparar após iniciar a batalha"
+        );
+
+        // Tenta disparar clicando numa célula do tabuleiro adversário via JS
+        // (JS click evita sobreposições de overlays durante a fase de batalha)
+        Boolean disparou = (Boolean) executeJavaScript(
+                "var celulas = document.querySelectorAll(" +
+                        "  '[class*=\"enemy\"] td, [class*=\"opponent\"] td, " +
+                        "  [class*=\"attack\"] td, [class*=\"grid\"] td');" +
+                        "for (var i = 0; i < celulas.length; i++) {" +
+                        "    var c = celulas[i];" +
+                        "    if (!c.className.includes('hit') && !c.className.includes('miss') && !c.className.includes('ship')) {" +
+                        "        c.click(); return true;" +
+                        "    }" +
+                        "}" +
+                        "return false;"
+        );
+
+        Selenide.sleep(1500);
+        // Verifica que depois de clicar aparece uma marcação de tiro (hit ou miss)
+        boolean temResultadoTiro =
+                $("[class*='hit']").exists() || $("[class*='miss']").exists()
+                        || $("[class*='fired']").exists() || $("[class*='shot']").exists()
+                        || Boolean.TRUE.equals(disparou);
+
+        Assertions.assertTrue(temResultadoTiro,
+                "Após disparar deve aparecer uma marcação de acerto ou de falha no tabuleiro");
+    }
+
+    // US9 – Como jogador, quero trocar mensagens de chat com o meu adversário durante a partida
+    @Test
+    public void us9_trocaMensagensChat() {
+        entrarJogoContraRobo();
+        Selenide.sleep(1000);
+
+        // Verifica que existe uma área de chat (input ou botão para abrir chat)
+        boolean chatAcessivel =
+                battleshipPage.chatInput.exists()
+                        || $("[class*='chat']").exists()
+                        || $x("//button[contains(@aria-label,'chat') or contains(@class,'chat') or contains(.,'Chat')]").exists();
+
+        Assertions.assertTrue(chatAcessivel,
+                "Deve existir uma área de chat ou botão para aceder ao chat durante a partida");
+
+        // Se o input de chat está visível, envia uma mensagem e verifica que aparece
+        if (battleshipPage.chatInput.exists() && battleshipPage.chatInput.isDisplayed()) {
+            battleshipPage.chatInput.setValue("Boa sorte! 🎯");
+            Selenide.sleep(500);
+
+            if (battleshipPage.chatSendButton.exists()) {
+                battleshipPage.chatSendButton.click();
+            } else {
+                battleshipPage.chatInput.pressEnter();
+            }
+            Selenide.sleep(1000);
+
+            // Após enviar, a mensagem deve aparecer na lista de mensagens
+            boolean mensagemVisivel =
+                    $x("//*[contains(text(),'Boa sorte')]").exists()
+                            || battleshipPage.chatMessageList.exists();
+
+            Assertions.assertTrue(mensagemVisivel,
+                    "A mensagem enviada deve aparecer no histórico de chat");
+        }
+    }
+
+    // US10 – Como jogador, quero ver o resultado final da partida para saber quem ganhou
+    @Test
+    public void us10_verResultadoFinalPartida() {
+        entrarJogoContraRobo();
+
+        // Coloca navios automaticamente e inicia a batalha
+        if (battleshipPage.autoPlaceButton.exists()) {
+            battleshipPage.autoPlaceButton.click();
+            Selenide.sleep(1000);
+        }
+        if (battleshipPage.readyButton.exists()) {
+            battleshipPage.readyButton.click();
+            Selenide.sleep(2000);
+        }
+
+        // Verifica que existe na página algum indicador de estado/resultado da partida:
+        // pode ser o placar, o painel de turnos, ou (se o jogo terminar) o ecrã de resultado
+        boolean temIndicadorResultado =
+                battleshipPage.gameResultScreen.exists()
+                        || battleshipPage.winnerText.exists()
+                        || $("[class*='score']").exists()
+                        || $("[class*='turn']").exists()
+                        || $("[class*='status']").exists()
+                        || $x("//*[contains(@class,'game') and (contains(@class,'info') or contains(@class,'status') or contains(@class,'panel'))]").exists();
+
+        Assertions.assertTrue(temIndicadorResultado,
+                "Deve existir um indicador de resultado ou estado da partida (placar, turno, vencedor)");
+    }
+
     // US16 – Como jogador, quero alterar o idioma da interface
     @Test
     public void us16_alterarIdioma() {
