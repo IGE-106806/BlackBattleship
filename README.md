@@ -15,10 +15,10 @@
 | US4 | Como jogador, quero jogar contra um robô para praticar sem precisar de um adversário humano. | Alta | Feito 94334 | 
 | US5 | Como jogador, quero receber um link de convite para partilhar com o meu adversário. | Média | 112949 |
 | US6 | Como jogador, quero colocar os meus navios no tabuleiro antes de iniciar a batalha. | Alta | Feito 106806
-| US7 | Como jogador, quero disparar sobre o tabuleiro adversário para tentar afundar os seus navios. | Alta |
+| US7 | Como jogador, quero disparar sobre o tabuleiro adversário para tentar afundar os seus navios. | Alta | Feito 106806
 | US8 | Como jogador, quero ver as regras do jogo para perceber como jogar. | Média | Feito 94334 | 
-| US9 | Como jogador, quero trocar mensagens de chat com o meu adversário durante a partida. | Baixa |
-| US10 | Como jogador, quero ver o resultado final da partida para saber quem ganhou. | Alta |
+| US9 | Como jogador, quero trocar mensagens de chat com o meu adversário durante a partida. | Baixa | Feito 106806
+| US10 | Como jogador, quero ver o resultado final da partida para saber quem ganhou. | Alta | Feito 106806
 | US11 | Como organizador, quero criar um torneio para organizar um campeonato entre vários jogadores. | Baixa |
 | US12 | Como jogador, quero iniciar sessão com a minha conta para guardar o meu histórico de partidas. | Média |
 | US13 | Como jogador, quero escolher que começo a jogar primeiro face ao robot. | Média | 112949 |
