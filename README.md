@@ -25,3 +25,9 @@
 | US14 | Como jogador, quero ver o histórico das minhas partidas anteriores para acompanhar a minha evolução. | Baixa |
 | US15 | Como jogador, quero partilhar o resultado da partida nas redes sociais para desafiar os meus amigos. | Baixa |
 | US16 | Como jogador, quero alterar o idioma da interface para jogar na minha língua preferida. | Baixa |
+
+---
+
+## Demo
+
+[Ver vídeo de demonstração](https://youtu.be/CcK32YOAegg)
