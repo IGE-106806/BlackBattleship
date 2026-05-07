@@ -27,7 +27,7 @@ public class BattleshipPageTest {
     public void setUp() {
         open("https://papergames.io/en/battleship");
         Selenide.sleep(4000);
-        executeJavaScript(
+
         // O banner de cookies do papergames usa a framework Fides (prefixo fc-)
         // Aguarda que o banner carregue completamente antes de o remover
         Selenide.sleep(4000);
@@ -201,17 +201,9 @@ public class BattleshipPageTest {
                 "Deve existir um link de convite (URL do lobby) ou um botão de partilha visível");
     }
 
-    // US13 – Como jogador, quero escolher quem começa o jogo
-    @Test
-    public void us13_escolherQuemComecaJogo() {
     // US13 – Como jogador, quero escolher quem começa o jogo (Custom options no Play vs robot)
     @Test
     public void us13_escolherQuemComecaJogo() {
-        // A engrenagem é um elemento clicável SEPARADO ao lado do texto "Play vs robot",
-        // dentro do mesmo cartão. Usar JS para localizar todos os ícones de engrenagem
-        // e clicar no que está dentro do cartão que contém "Play vs robot".
-        // A engrenagem é um <button mat-icon-button> ANINHADO DENTRO do botão "Play vs robot".
-        // Localiza o botão principal pelo texto e depois clica no botão interior com fa-gear.
         Object clicado = executeJavaScript(
                 "var botoes = document.querySelectorAll('button');" +
                         "for (var i = 0; i < botoes.length; i++) {" +
@@ -227,75 +219,29 @@ public class BattleshipPageTest {
                 "Não foi possível encontrar/clicar no ícone de engrenagem do 'Play vs robot'");
         Selenide.sleep(1500);
 
-        // Clica em "Custom options" no menu que abriu
         $x("//*[contains(text(),'Custom options') or contains(text(),'Custom') or contains(text(),'Opções')]")
                 .shouldBe(visible).click();
         Selenide.sleep(1500);
 
-        // Abre o dropdown DA SECÇÃO "Who plays first?" (não confundir com o primeiro dropdown "Game")
-        // Localiza o label "Who plays first?" e o mat-select que vem logo a seguir
         $x("(//*[contains(text(),'Who plays first')]/following::mat-select)[1]")
                 .shouldBe(visible).click();
         Selenide.sleep(1000);
 
-        // Seleciona a opção "I play first" no painel de opções aberto
         $x("//mat-option[contains(.,'I start first') or contains(.,'start first')]")
                 .shouldBe(visible).click();
         Selenide.sleep(1000);
 
-        // Confirma/guarda clicando em "Save settings"
         $x("//button[contains(.,'Save settings') or contains(.,'Save') " +
                 "or contains(.,'Apply') or contains(.,'Guardar')]")
                 .shouldBe(visible).click();
         Selenide.sleep(1500);
     }
 
-    // US16 – Como jogador, quero alterar o idioma da interface
-    @Test
-    public void us16_alterarIdioma() {
-        // Abre o menu de Settings (ícone de engrenagem no canto superior esquerdo)
-        // O botão tem o atributo aria-describedby a apontar para um tooltip com texto "Settings"
-        executeJavaScript(
-                "var tooltips = document.querySelectorAll('[role=tooltip]');" +
-                        "for (var i = 0; i < tooltips.length; i++) {" +
-                        "    if (tooltips[i].textContent.trim() === 'Settings') {" +
-                        "        var id = tooltips[i].id;" +
-                        "        var btn = document.querySelector('[aria-describedby=\"' + id + '\"]');" +
-                        "        if (btn) { btn.click(); break; }" +
-                        "    }" +
-                        "}"
-        );
-        Selenide.sleep(1500);
-
-        $x("//*[normalize-space(text())='Language']").shouldBe(visible).click();
-        Selenide.sleep(1000);
-
-        // Clica no item "Language" dentro do diálogo de Settings
-        $x("//*[normalize-space(text())='Language']").shouldBe(visible).click();
-        Selenide.sleep(1000);
-
-        // Clica na opção Português (Portuguese / Português / pt)
-        $x("//*[contains(text(),'Português') or contains(text(),'Portuguese') " +
-                "or normalize-space(text())='PT' or normalize-space(text())='pt']")
-                .shouldBe(visible).click();
-        Selenide.sleep(2500);
-
-        // Após mudar idioma, a URL deve conter /pt/ ou o conteúdo deve estar em PT
-        String url = WebDriverRunner.url();
-        boolean urlMudou = url.contains("/pt/") || url.contains("/pt-");
-
-        boolean conteudoEmPT = $x("//*[contains(text(),'Jogar') or contains(text(),'amigo') " +
-                "or contains(text(),'Como jogar') or contains(text(),'Regras')]")
-                .exists();
-
-        Assertions.assertTrue(urlMudou || conteudoEmPT,
-                "Após mudar para PT, a URL deve conter '/pt/' ou o conteúdo deve estar em português. URL: " + url);
-    }
-
     // ─── US106806 ─────────────────────────────────────────────────────────────
 
     /**
-     * Helper: entra numa sessão de jogo contra o robô.
+     * Helper: abre a página, clica em "Play vs robot", preenche o nickname se necessário,
+     * seleciona Battleship no dropdown (se aparecer) e clica em Continue.
      * Após este método a URL já saiu de /battleship e estamos na sessão de jogo.
      */
     private void entrarJogoContraRobo() {
@@ -327,12 +273,8 @@ public class BattleshipPageTest {
     public void us6_colocarNaviosNoTabuleiro() {
         entrarJogoContraRobo();
 
-        // Após entrar no jogo deve aparecer o tabuleiro de colocação de navios
-        Assertions.assertTrue(
-                $("table").exists() || $("[class*='grid']").exists()
-                        || $("[class*='board']").exists() || $("[class*='cell']").exists(),
-                "O tabuleiro de colocação de navios deve estar visível após iniciar o jogo"
-        );
+        // O tabuleiro do adversário tem classe "opponent"
+        $(".opponent").shouldBe(visible);
 
         // Se existir botão de colocação aleatória usa-o para colocar navios automaticamente
         if (battleshipPage.autoPlaceButton.exists()) {
@@ -438,4 +380,102 @@ public class BattleshipPageTest {
         Assertions.assertTrue(temIndicadorResultado,
                 "Deve existir um indicador de resultado ou estado da partida (placar, turno ou vencedor)");
     }
+
+    // US11 – Como organizador, quero criar um torneio
+    @Test
+    public void us11_criarTorneio() {
+        battleshipPage.createTournamentButton.shouldBe(visible);
+        battleshipPage.createTournamentButton.click();
+        Selenide.sleep(1500);
+
+        String url = WebDriverRunner.url();
+        Assertions.assertTrue(
+                url.contains("tournament"),
+                "URL deve conter 'tournament' após clicar no botão. URL atual: " + url
+        );
+    }
+
+    // US12 – Como utilizador, quero aceder à loja do jogo (Shop) para consultar os itens e cosméticos disponíveis.
+    @Test
+    public void us12_acederLoja() {
+        open("https://papergames.io/en/battleship");
+
+        Selenide.sleep(5000);
+
+        if ($(".fc-cta-consent").exists()) {
+            $(".fc-cta-consent").click();
+        }
+
+        executeJavaScript("arguments[0].click();", battleshipPage.shopLink);
+
+        Selenide.sleep(2000);
+
+        Assertions.assertTrue(WebDriverRunner.url().contains("/shop"),
+                "Deveria estar na página da loja.");
+    }
+
+    // US14 – Como jogador, quero ver o histórico das minhas partidas
+    @Test
+    public void us14_verHistoricoPartidas() {
+        battleshipPage.historyLink.shouldBe(visible);
+        battleshipPage.historyLink.click();
+        Selenide.sleep(1500);
+
+        String url = WebDriverRunner.url();
+        Assertions.assertTrue(
+                url.contains("history") || url.contains("profile"),
+                "URL deve conter 'history' ou 'profile'. URL atual: " + url
+        );
+    }
+
+    // US15 – Como jogador, quero partilhar o resultado da partida
+    @Test
+    public void us15_partilharResultado() {
+        executeJavaScript("window.scrollTo(0, document.body.scrollHeight)");
+        Selenide.sleep(1000);
+
+        battleshipPage.shareButton.shouldBe(visible);
+        Assertions.assertTrue(
+                battleshipPage.shareButton.exists(),
+                "Deve existir um botão ou link de partilha nas redes sociais"
+        );
+    }
+
+    // US16 – Como jogador, quero alterar o idioma da interface
+    @Test
+    public void us16_alterarIdioma() {
+        executeJavaScript(
+                "var tooltips = document.querySelectorAll('[role=tooltip]');" +
+                        "for (var i = 0; i < tooltips.length; i++) {" +
+                        "    if (tooltips[i].textContent.trim() === 'Settings') {" +
+                        "        var id = tooltips[i].id;" +
+                        "        var btn = document.querySelector('[aria-describedby=\"' + id + '\"]');" +
+                        "        if (btn) { btn.click(); break; }" +
+                        "    }" +
+                        "}"
+        );
+        Selenide.sleep(1500);
+
+        $x("//*[normalize-space(text())='Language']").shouldBe(visible).click();
+        Selenide.sleep(1000);
+
+        $x("//*[normalize-space(text())='Language']").shouldBe(visible).click();
+        Selenide.sleep(1000);
+
+        $x("//*[contains(text(),'Português') or contains(text(),'Portuguese') " +
+                "or normalize-space(text())='PT' or normalize-space(text())='pt']")
+                .shouldBe(visible).click();
+        Selenide.sleep(2500);
+
+        String url = WebDriverRunner.url();
+        boolean urlMudou = url.contains("/pt/") || url.contains("/pt-");
+
+        boolean conteudoEmPT = $x("//*[contains(text(),'Jogar') or contains(text(),'amigo') " +
+                "or contains(text(),'Como jogar') or contains(text(),'Regras')]")
+                .exists();
+
+        Assertions.assertTrue(urlMudou || conteudoEmPT,
+                "Após mudar para PT, a URL deve conter '/pt/' ou o conteúdo deve estar em português. URL: " + url);
+    }
+
 }
