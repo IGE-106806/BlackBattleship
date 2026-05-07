@@ -56,11 +56,16 @@ public class BattleshipPage {
     // US11 – Botão/link para criar torneio
     public SelenideElement createTournamentButton = $x("//a[contains(@href,'tournament') or contains(text(),'Tournament') or contains(text(),'tournament')]");
 
+    // US12 – Botão de acesso à Loja (Shop)
+    public SelenideElement shopLink = $x("//a[contains(@href, '/shop') or .//*[contains(text(), 'Shop')]]");
+
     // US14 – Link para histórico de partidas no perfil
     public SelenideElement historyLink = $x("//a[contains(@href,'history') or contains(text(),'History') or contains(text(),'Histórico')]");
 
     // US15 – Botão de partilha nas redes sociais
     public SelenideElement shareButton = $x("//*[contains(@class,'share') or contains(text(),'Share') or contains(text(),'Facebook') or contains(text(),'Twitter')]");
+
+
 
 }
 

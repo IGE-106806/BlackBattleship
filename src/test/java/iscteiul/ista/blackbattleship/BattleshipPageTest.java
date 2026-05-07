@@ -501,6 +501,25 @@ BattleshipPageTest {
         );
     }
 
+    // US12 – Como utilizador, quero aceder à loja do jogo (Shop) para consultar os itens e cosméticos disponíveis.
+    @Test
+    public void us12_acederLoja() {
+        open("https://papergames.io/en/battleship");
+
+        Selenide.sleep(5000);
+
+        if ($(".fc-cta-consent").exists()) {
+            $(".fc-cta-consent").click();
+        }
+
+        executeJavaScript("arguments[0].click();", battleshipPage.shopLink);
+
+        Selenide.sleep(2000);
+
+        Assertions.assertTrue(WebDriverRunner.url().contains("/shop"),
+                "Deveria estar na página da loja.");
+    }
+
     // US14 – Como jogador, quero ver o histórico das minhas partidas
     @Test
     public void us14_verHistoricoPartidas() {
