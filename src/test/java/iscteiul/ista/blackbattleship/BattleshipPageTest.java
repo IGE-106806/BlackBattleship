@@ -110,4 +110,15 @@ public class BattleshipPageTest {
             "URL deve mudar para a partida contra o robô. URL atual: " + url
         );
     }
+
+    // US8 – Como jogador, quero ver as regras do jogo para perceber como jogar
+    @Test
+    public void us8_verRegrasDoJogo() {
+        // As regras estão visíveis mais abaixo na página principal – rolar até ao final
+        executeJavaScript("window.scrollTo(0, document.body.scrollHeight)");
+        Selenide.sleep(1500);
+
+        // Verificar que existe uma secção com título de regras / "how to play"
+        battleshipPage.howToPlaySection.shouldBe(visible);
+    }
 }

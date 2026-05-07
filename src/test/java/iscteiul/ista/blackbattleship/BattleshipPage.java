@@ -28,4 +28,7 @@ public class BattleshipPage {
 
     // US4 – Botão "Play vs robot"
     public SelenideElement playVsRobotButton = $x("//span[contains(text(),'Play vs robot')]");
+
+    // US8 – Secção de regras / "How to play" no rodapé da página principal
+    public SelenideElement howToPlaySection = $x("//*[contains(translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'how to play') or contains(translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'rules')]");
 }
