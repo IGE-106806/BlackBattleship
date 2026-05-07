@@ -10,7 +10,56 @@ import org.junit.jupiter.api.*;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
-public class BattleshipPageTest {
+public class
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BattleshipPageTest {
 
     BattleshipPage battleshipPage = new BattleshipPage();
 
@@ -200,6 +249,8 @@ public class BattleshipPageTest {
         Assertions.assertTrue(temElementoConvite || urlLobby.length() > 40,
                 "Deve existir um link de convite (URL do lobby) ou um botão de partilha visível");
     }
+
+    // US13 – Como jogador, quero escolher quem começa o jogo
 
     // US13 – Como jogador, quero escolher quem começa o jogo (Custom options no Play vs robot)
     @Test
