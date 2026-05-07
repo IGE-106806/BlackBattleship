@@ -2,6 +2,7 @@ package iscteiul.ista.blackbattleship;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
@@ -45,5 +46,41 @@ public class BattleshipPageTest {
             "Título da página deve conter 'Battleship'"
         );
         battleshipPage.gameTitle.shouldBe(visible);
+    }
+
+    // US3 – Como jogador, quero criar uma nova partida para poder desafiar um amigo
+    @Test
+    public void us3_criarPartidaComAmigo() {
+        battleshipPage.playWithFriendButton.shouldBe(visible);
+        battleshipPage.playWithFriendButton.click();
+        Selenide.sleep(1500);
+
+        // O modal "Who are you?" só aparece na primeira sessão; trata-o condicionalmente
+        if (battleshipPage.usernameInput.exists()) {
+            battleshipPage.usernameInput.setValue("TestPlayer");
+            battleshipPage.continueButton.click();
+            Selenide.sleep(1500);
+        }
+
+        // O modal de seleção de jogo pode ou não aparecer (depende do estado da sessão)
+        if ($("mat-dialog-container").exists()) {
+            if (battleshipPage.gameSelectDropdown.exists()) {
+                String selectedText = battleshipPage.gameSelectDropdown.getText();
+                if (selectedText.contains("Select") || selectedText.isBlank()) {
+                    battleshipPage.gameSelectDropdown.click();
+                    battleshipPage.battleshipOption.shouldBe(visible).click();
+                    Selenide.sleep(500);
+                }
+            }
+            battleshipPage.continueButton.click();
+            Selenide.sleep(2000);
+        }
+
+        // A URL deve ter mudado para o lobby da partida com amigo
+        String url = WebDriverRunner.url();
+        Assertions.assertFalse(
+            url.endsWith("/battleship"),
+            "URL deve mudar para o lobby da partida com amigo. URL atual: " + url
+        );
     }
 }
