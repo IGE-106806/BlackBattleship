@@ -10,7 +10,56 @@ import org.junit.jupiter.api.*;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
-public class BattleshipPageTest {
+public class
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BattleshipPageTest {
 
     BattleshipPage battleshipPage = new BattleshipPage();
 
@@ -27,7 +76,7 @@ public class BattleshipPageTest {
     public void setUp() {
         open("https://papergames.io/en/battleship");
         Selenide.sleep(4000);
-        executeJavaScript(
+
         // O banner de cookies do papergames usa a framework Fides (prefixo fc-)
         // Aguarda que o banner carregue completamente antes de o remover
         Selenide.sleep(4000);
@@ -202,8 +251,7 @@ public class BattleshipPageTest {
     }
 
     // US13 – Como jogador, quero escolher quem começa o jogo
-    @Test
-    public void us13_escolherQuemComecaJogo() {
+
     // US13 – Como jogador, quero escolher quem começa o jogo (Custom options no Play vs robot)
     @Test
     public void us13_escolherQuemComecaJogo() {
@@ -438,4 +486,20 @@ public class BattleshipPageTest {
         Assertions.assertTrue(temIndicadorResultado,
                 "Deve existir um indicador de resultado ou estado da partida (placar, turno ou vencedor)");
     }
+
+    // US11 – Como organizador, quero criar um torneio
+    @Test
+    public void us11_criarTorneio() {
+        battleshipPage.createTournamentButton.shouldBe(visible);
+        battleshipPage.createTournamentButton.click();
+        Selenide.sleep(1500);
+
+        String url = WebDriverRunner.url();
+        Assertions.assertTrue(
+                url.contains("tournament"),
+                "URL deve conter 'tournament' após clicar no botão. URL atual: " + url
+        );
+    }
+
+
 }
