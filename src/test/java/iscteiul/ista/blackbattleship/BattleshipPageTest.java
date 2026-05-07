@@ -515,6 +515,19 @@ BattleshipPageTest {
         );
     }
 
+    // US15 – Como jogador, quero partilhar o resultado da partida
+    @Test
+    public void us15_partilharResultado() {
+        executeJavaScript("window.scrollTo(0, document.body.scrollHeight)");
+        Selenide.sleep(1000);
+
+        battleshipPage.shareButton.shouldBe(visible);
+        Assertions.assertTrue(
+                battleshipPage.shareButton.exists(),
+                "Deve existir um botão ou link de partilha nas redes sociais"
+        );
+    }
+
 
 
 

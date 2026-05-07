@@ -59,6 +59,8 @@ public class BattleshipPage {
     // US14 – Link para histórico de partidas no perfil
     public SelenideElement historyLink = $x("//a[contains(@href,'history') or contains(text(),'History') or contains(text(),'Histórico')]");
 
+    // US15 – Botão de partilha nas redes sociais
+    public SelenideElement shareButton = $x("//*[contains(@class,'share') or contains(text(),'Share') or contains(text(),'Facebook') or contains(text(),'Twitter')]");
 
 }
 
