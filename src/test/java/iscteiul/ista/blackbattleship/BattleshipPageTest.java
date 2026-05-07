@@ -100,25 +100,42 @@ public class BattleshipPageTest {
 
         // Deve aparecer modal para configurar a partida contra robô
         $("mat-dialog-container").shouldBe(visible);
-        battleshipPage.continueButton.shouldBe(visible).click();
-        Selenide.sleep(3000);
 
-        // Após confirmar, a URL deve mudar OU o tabuleiro de jogo deve aparecer na página
+        // Selecionar o jogo no dropdown se ainda não estiver selecionado
+        if (battleshipPage.gameSelectDropdown.exists()) {
+            String selectedText = battleshipPage.gameSelectDropdown.getText();
+            if (selectedText.contains("Select") || selectedText.isBlank()) {
+                battleshipPage.gameSelectDropdown.click();
+                Selenide.sleep(500);
+                battleshipPage.battleshipOption.shouldBe(visible).click();
+                Selenide.sleep(500);
+            }
+        }
+
+        // Clicar Continue via JS para evitar bloqueio do backdrop Angular
+        executeJavaScript(
+            "var btns = document.querySelectorAll('mat-dialog-container button');" +
+            "for (var i = 0; i < btns.length; i++) {" +
+            "  if (btns[i].textContent.toLowerCase().indexOf('continue') >= 0) {" +
+            "    btns[i].click(); break;" +
+            "  }" +
+            "}"
+        );
+        Selenide.sleep(4000);
+
+        // Após confirmar, a URL deve ter mudado para a sala de jogo
         String url = WebDriverRunner.url();
-        boolean urlChanged = !url.endsWith("/battleship");
-        boolean gameLoaded = $x("//*[contains(@class,'board') or contains(@class,'game-') or contains(@class,'ship') or contains(@class,'grid')]").exists();
-
-        Assertions.assertTrue(
-            urlChanged || gameLoaded,
-            "Após iniciar jogo vs robô, URL deve mudar ou tabuleiro deve aparecer. URL atual: " + url
+        Assertions.assertFalse(
+            url.endsWith("/battleship"),
+            "Após iniciar jogo vs robô, URL deve mudar. URL atual: " + url
         );
     }
 
     // US8 – Como jogador, quero ver as regras do jogo para perceber como jogar
     @Test
     public void us8_verRegrasDoJogo() {
-        // As regras estão visíveis mais abaixo na página principal – rolar até ao final
-        executeJavaScript("window.scrollTo(0, document.body.scrollHeight)");
+        // As regras estão a cerca de metade da página principal
+        executeJavaScript("window.scrollTo(0, document.body.scrollHeight / 2)");
         Selenide.sleep(1500);
 
         // Verificar que existe uma secção com título de regras / "how to play"
