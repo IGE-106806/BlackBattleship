@@ -56,5 +56,9 @@ public class BattleshipPage {
     // US11 – Botão/link para criar torneio
     public SelenideElement createTournamentButton = $x("//a[contains(@href,'tournament') or contains(text(),'Tournament') or contains(text(),'tournament')]");
 
+    // US14 – Link para histórico de partidas no perfil
+    public SelenideElement historyLink = $x("//a[contains(@href,'history') or contains(text(),'History') or contains(text(),'Histórico')]");
+
+
 }
 

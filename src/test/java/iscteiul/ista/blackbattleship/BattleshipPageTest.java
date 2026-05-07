@@ -501,5 +501,21 @@ BattleshipPageTest {
         );
     }
 
+    // US14 – Como jogador, quero ver o histórico das minhas partidas
+    @Test
+    public void us14_verHistoricoPartidas() {
+        battleshipPage.historyLink.shouldBe(visible);
+        battleshipPage.historyLink.click();
+        Selenide.sleep(1500);
+
+        String url = WebDriverRunner.url();
+        Assertions.assertTrue(
+                url.contains("history") || url.contains("profile"),
+                "URL deve conter 'history' ou 'profile'. URL atual: " + url
+        );
+    }
+
+
+
 
 }
