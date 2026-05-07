@@ -83,4 +83,31 @@ public class BattleshipPageTest {
             "URL deve mudar para o lobby da partida com amigo. URL atual: " + url
         );
     }
+
+    // US4 – Como jogador, quero jogar contra um robô para praticar sem precisar de um adversário humano
+    @Test
+    public void us4_jogarContraRobo() {
+        battleshipPage.playVsRobotButton.shouldBe(visible);
+        battleshipPage.playVsRobotButton.click();
+        Selenide.sleep(1500);
+
+        // O modal "Who are you?" só aparece na primeira sessão; trata-o condicionalmente
+        if (battleshipPage.usernameInput.exists()) {
+            battleshipPage.usernameInput.setValue("TestPlayer");
+            battleshipPage.continueButton.click();
+            Selenide.sleep(1500);
+        }
+
+        // Deve aparecer um modal com opção de jogar contra robô e botão Continue
+        $("mat-dialog-container").shouldBe(visible);
+        battleshipPage.continueButton.shouldBe(visible).click();
+        Selenide.sleep(2000);
+
+        // A URL deve ter mudado para a partida contra o robô
+        String url = WebDriverRunner.url();
+        Assertions.assertFalse(
+            url.endsWith("/battleship"),
+            "URL deve mudar para a partida contra o robô. URL atual: " + url
+        );
+    }
 }

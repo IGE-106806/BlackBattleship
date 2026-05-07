@@ -25,4 +25,7 @@ public class BattleshipPage {
 
     // US3 – Botão "Continue" nos modais (texto está num <span> filho, por isso usa contains(.))
     public SelenideElement continueButton = $x("//mat-dialog-container//button[contains(.,'Continue')]");
+
+    // US4 – Botão "Play vs robot"
+    public SelenideElement playVsRobotButton = $x("//span[contains(text(),'Play vs robot')]");
 }
