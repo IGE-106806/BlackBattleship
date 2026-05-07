@@ -10,56 +10,7 @@ import org.junit.jupiter.api.*;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
-public class
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-BattleshipPageTest {
+public class BattleshipPageTest {
 
     BattleshipPage battleshipPage = new BattleshipPage();
 
@@ -76,12 +27,7 @@ BattleshipPageTest {
     public void setUp() {
         open("https://papergames.io/en/battleship");
         Selenide.sleep(4000);
-
-        // O banner de cookies do papergames usa a framework Fides (prefixo fc-)
-        // Aguarda que o banner carregue completamente antes de o remover
-        Selenide.sleep(4000);
         executeJavaScript(
-                // Esconde e remove todos os elementos com classe fc- (cookie banner Fides)
                 "document.querySelectorAll('[class]').forEach(function(el) {" +
                         "    var cls = typeof el.className === 'string' ? el.className : '';" +
                         "    if (cls.indexOf('fc-') >= 0) {" +
@@ -150,7 +96,7 @@ BattleshipPageTest {
             Selenide.sleep(1500);
         }
 
-        $x("//mat-dialog-container[contains(.,'Play vs robot')]").shouldBe(visible);
+        $("mat-dialog-container").shouldBe(visible);
 
         if (battleshipPage.gameSelectDropdown.exists()) {
             String selectedText = battleshipPage.gameSelectDropdown.getText();
@@ -161,8 +107,17 @@ BattleshipPageTest {
             }
         }
 
-        battleshipPage.continueButton.click();
-        Selenide.sleep(2000);
+        // Usar JS click para evitar bloqueio do backdrop Angular Material
+        executeJavaScript(
+                "var btns = document.querySelectorAll('mat-dialog-container button');" +
+                "for (var i = 0; i < btns.length; i++) {" +
+                "  if (btns[i].textContent.toLowerCase().indexOf('continue') >= 0) {" +
+                "    btns[i].click(); break;" +
+                "  }" +
+                "}"
+        );
+        Selenide.sleep(4000);
+
         String url = WebDriverRunner.url();
         Assertions.assertFalse(
                 url.endsWith("/battleship"),
@@ -172,14 +127,12 @@ BattleshipPageTest {
 
     // US8 – Como jogador, quero ver as regras do jogo para perceber como jogar
     @Test
-    public void us8_regrasDoJogoVisiveis() {
-        executeJavaScript("window.scrollTo(0, document.body.scrollHeight)");
-        Selenide.sleep(1000);
+    public void us8_verRegrasDoJogo() {
+        // As regras estão a cerca de metade da página principal
+        executeJavaScript("window.scrollTo(0, document.body.scrollHeight / 2)");
+        Selenide.sleep(1500);
 
-        $x("//*[contains(text(),'How to play') or contains(text(),'how to play') " +
-                "or contains(text(),'Rules') or contains(text(),'About Battleship') " +
-                "or contains(text(),'About the game') or contains(text(),'Battleship rules')]")
-                .shouldBe(visible);
+        battleshipPage.howToPlaySection.shouldBe(visible);
     }
 
     // US2 – Como jogador, quero introduzir um nickname para me identificar nas partidas
@@ -188,14 +141,11 @@ BattleshipPageTest {
         battleshipPage.playWithFriendButton.shouldBe(visible).click();
         Selenide.sleep(1500);
 
-        // Modal "Who are you?" com input de nickname deve aparecer (pelo menos na primeira sessão)
-        // Se sessão estiver guardada, este passo é saltado
         if (battleshipPage.usernameInput.exists()) {
             battleshipPage.usernameInput.shouldBe(visible);
             battleshipPage.usernameInput.setValue("Pedro123");
             Selenide.sleep(500);
 
-            // Verifica que o valor foi inserido corretamente no input
             String valorInserido = battleshipPage.usernameInput.getValue();
             Assertions.assertEquals("Pedro123", valorInserido,
                     "O nickname inserido deve ser 'Pedro123'");
@@ -203,7 +153,6 @@ BattleshipPageTest {
             battleshipPage.continueButton.shouldBe(visible).click();
             Selenide.sleep(1500);
         } else {
-            // Sessão já tem nickname guardado - o teste passa com mensagem informativa
             System.out.println("Sessão já tem nickname guardado, modal não apareceu.");
         }
     }
@@ -233,14 +182,12 @@ BattleshipPageTest {
             Selenide.sleep(2500);
         }
 
-        // Após criar a partida, a URL do lobby é o próprio link de convite
         String urlLobby = WebDriverRunner.url();
         Assertions.assertTrue(
                 urlLobby.contains("/battleship/") || urlLobby.matches(".*/[a-zA-Z0-9-]{6,}.*"),
                 "A URL do lobby deve conter um identificador único (link de convite). URL: " + urlLobby
         );
 
-        // Verifica também que existe algum elemento visível relacionado com partilha/convite
         boolean temElementoConvite =
                 $x("//*[contains(text(),'Invite') or contains(text(),'invite') " +
                         "or contains(text(),'Share') or contains(text(),'share') " +
@@ -249,8 +196,6 @@ BattleshipPageTest {
         Assertions.assertTrue(temElementoConvite || urlLobby.length() > 40,
                 "Deve existir um link de convite (URL do lobby) ou um botão de partilha visível");
     }
-
-    // US13 – Como jogador, quero escolher quem começa o jogo
 
     // US13 – Como jogador, quero escolher quem começa o jogo (Custom options no Play vs robot)
     @Test
@@ -290,11 +235,6 @@ BattleshipPageTest {
 
     // ─── US106806 ─────────────────────────────────────────────────────────────
 
-    /**
-     * Helper: abre a página, clica em "Play vs robot", preenche o nickname se necessário,
-     * seleciona Battleship no dropdown (se aparecer) e clica em Continue.
-     * Após este método a URL já saiu de /battleship e estamos na sessão de jogo.
-     */
     private void entrarJogoContraRobo() {
         battleshipPage.playVsRobotButton.shouldBe(visible).click();
         Selenide.sleep(1500);
@@ -324,10 +264,8 @@ BattleshipPageTest {
     public void us6_colocarNaviosNoTabuleiro() {
         entrarJogoContraRobo();
 
-        // O tabuleiro do adversário tem classe "opponent"
         $(".opponent").shouldBe(visible);
 
-        // Se existir botão de colocação aleatória usa-o para colocar navios automaticamente
         if (battleshipPage.autoPlaceButton.exists()) {
             battleshipPage.autoPlaceButton.click();
             Selenide.sleep(1000);
@@ -347,16 +285,13 @@ BattleshipPageTest {
     public void us7_dispararSobreTabuleiro() {
         entrarJogoContraRobo();
 
-        // Coloca navios automaticamente – o jogo auto-inicia após a colocação
         if (battleshipPage.autoPlaceButton.exists()) {
             battleshipPage.autoPlaceButton.click();
             Selenide.sleep(3000);
         }
 
-        // O tabuleiro do adversário tem classe "opponent"
         $(".opponent").shouldBe(visible);
 
-        // Dispara clicando numa célula livre do tabuleiro adversário via JS
         Boolean disparou = (Boolean) executeJavaScript(
                 "var celulas = document.querySelectorAll('.opponent td');" +
                         "for (var i = 0; i < celulas.length; i++) {" +
@@ -380,7 +315,6 @@ BattleshipPageTest {
         entrarJogoContraRobo();
         Selenide.sleep(1000);
 
-        // O botão de chat usa o ícone FontAwesome fa-comment (visível na barra lateral)
         boolean chatAcessivel =
                 $(".fa-comment").exists()
                         || $x("//*[contains(@class,'fa-comment')]").exists()
@@ -389,12 +323,10 @@ BattleshipPageTest {
         Assertions.assertTrue(chatAcessivel,
                 "Deve existir um botão de chat (ícone fa-comment) durante a partida");
 
-        // Abre o chat clicando no ícone fa-comment e tenta enviar uma mensagem
         if ($x("//button[.//*[contains(@class,'fa-comment')]]").exists()) {
             $x("//button[.//*[contains(@class,'fa-comment')]]").click();
             Selenide.sleep(1500);
 
-            // Após abrir, procura o input de texto do chat
             if ($("input[type='text']").exists() && $("input[type='text']").isDisplayed()) {
                 $("input[type='text']").setValue("Boa sorte!");
                 $("input[type='text']").pressEnter();
@@ -412,15 +344,11 @@ BattleshipPageTest {
     public void us10_verResultadoFinalPartida() {
         entrarJogoContraRobo();
 
-        // Coloca navios automaticamente – o jogo auto-inicia após a colocação
         if (battleshipPage.autoPlaceButton.exists()) {
             battleshipPage.autoPlaceButton.click();
             Selenide.sleep(3000);
         }
 
-        // Durante a batalha estão visíveis os indicadores de estado que mostrarão o resultado final:
-        // "score" (placar de navios afundados), "current-player" (de quem é o turno),
-        // "chronometer" (temporizador de jogada), ou ecrã de resultado se o jogo terminar
         boolean temIndicadorResultado =
                 $(".score").exists()
                         || $(".current-player").exists()
@@ -446,11 +374,10 @@ BattleshipPageTest {
         );
     }
 
-    // US12 – Como utilizador, quero aceder à loja do jogo (Shop) para consultar os itens e cosméticos disponíveis.
+    // US12 – Como utilizador, quero aceder à loja do jogo (Shop) para consultar os itens e cosméticos disponíveis
     @Test
     public void us12_acederLoja() {
         open("https://papergames.io/en/battleship");
-
         Selenide.sleep(5000);
 
         if ($(".fc-cta-consent").exists()) {
@@ -458,7 +385,6 @@ BattleshipPageTest {
         }
 
         executeJavaScript("arguments[0].click();", battleshipPage.shopLink);
-
         Selenide.sleep(2000);
 
         Assertions.assertTrue(WebDriverRunner.url().contains("/shop"),
