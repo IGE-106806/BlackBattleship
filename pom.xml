@@ -14,9 +14,17 @@
     <maven.compiler.target>25</maven.compiler.target>
     <maven.compiler.source>25</maven.compiler.source>
 <junit.version>5.11.3</junit.version><aspectj.version>1.9.22.1</aspectj.version>
-    <allure.version>2.29.0</allure.version>  </properties>
+    <allure.version>2.29.0</allure.version>
+    <selenium.version>4.25.0</selenium.version>
+  </properties>
 
   <dependencies>
+    <!-- Selenium WebDriver (compile scope: usado pelas Page Object Classes em src/main/java) -->
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>${selenium.version}</version>
+    </dependency>
 <dependency>
       <groupId>io.qameta.allure</groupId>
       <artifactId>allure-junit5</artifactId>
