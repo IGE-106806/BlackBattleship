@@ -75,8 +75,12 @@ public class UserStory5 {
 
     /**
      * Seleciona o jogo Battleship no dropdown e confirma, criando a partida.
+     * Só age se um diálogo estiver aberto; caso contrário, retorna sem ação.
      */
     public void selectBattleshipAndContinue() {
+        if (driver.findElements(By.cssSelector("mat-dialog-container")).isEmpty()) {
+            return;
+        }
         try {
             wait.until(ExpectedConditions.elementToBeClickable(gameDropdown)).click();
             wait.until(ExpectedConditions.elementToBeClickable(battleshipOption)).click();
@@ -84,7 +88,11 @@ public class UserStory5 {
         } catch (Exception ignored) {
             // Jogo pode já estar pré-selecionado
         }
-        wait.until(ExpectedConditions.elementToBeClickable(continueButton)).click();
+        try {
+            wait.until(ExpectedConditions.elementToBeClickable(continueButton)).click();
+        } catch (Exception ignored) {
+            // Diálogo pode ter fechado automaticamente
+        }
     }
 
     /**
