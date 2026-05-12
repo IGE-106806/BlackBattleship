@@ -84,11 +84,7 @@ public class UserStory5 {
         } catch (Exception ignored) {
             // Jogo pode já estar pré-selecionado
         }
-        try {
-            wait.until(ExpectedConditions.elementToBeClickable(continueButton)).click();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        wait.until(ExpectedConditions.elementToBeClickable(continueButton)).click();
     }
 
     /**
