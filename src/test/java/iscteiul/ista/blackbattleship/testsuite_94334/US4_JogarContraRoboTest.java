@@ -1,18 +1,19 @@
-package iscteiul.ista.blackbattleship.IGE_94334;
+package iscteiul.ista.blackbattleship.testsuite_94334;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
+import iscteiul.ista.blackbattleship.testsuite_94334.pages.US4_JogarContraRoboPage;
 import org.junit.jupiter.api.*;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
-public class US3_CriarPartidaTest {
+public class US4_JogarContraRoboTest {
 
-    US3_CriarPartidaPage page = new US3_CriarPartidaPage();
+    US4_JogarContraRoboPage page = new US4_JogarContraRoboPage();
 
     @BeforeAll
     public static void setUpAll() {
@@ -38,11 +39,11 @@ public class US3_CriarPartidaTest {
         Selenide.sleep(1000);
     }
 
-    // US3 – Como jogador, quero criar uma nova partida para poder desafiar um amigo
+    // US4 – Como jogador, quero jogar contra um robô para praticar sem precisar de um adversário humano
     @Test
-    public void us3_criarPartidaComAmigo() {
-        page.playWithFriendButton.shouldBe(visible);
-        page.playWithFriendButton.click();
+    public void us4_jogarContraRobo() {
+        page.playVsRobotButton.shouldBe(visible);
+        page.playVsRobotButton.click();
         Selenide.sleep(1500);
 
         // O modal "Who are you?" só aparece na primeira sessão
@@ -52,24 +53,35 @@ public class US3_CriarPartidaTest {
             Selenide.sleep(1500);
         }
 
-        // O modal de seleção de jogo pode ou não aparecer
-        if ($("mat-dialog-container").exists()) {
-            if (page.gameSelectDropdown.exists()) {
-                String selectedText = page.gameSelectDropdown.getText();
-                if (selectedText.contains("Select") || selectedText.isBlank()) {
-                    page.gameSelectDropdown.click();
-                    page.battleshipOption.shouldBe(visible).click();
-                    Selenide.sleep(500);
-                }
+        // Modal de configuração do jogo contra robô
+        $("mat-dialog-container").shouldBe(visible);
+
+        // Selecionar o jogo no dropdown se necessário
+        if (page.gameSelectDropdown.exists()) {
+            String selectedText = page.gameSelectDropdown.getText();
+            if (selectedText.contains("Select") || selectedText.isBlank()) {
+                page.gameSelectDropdown.click();
+                Selenide.sleep(500);
+                page.battleshipOption.shouldBe(visible).click();
+                Selenide.sleep(500);
             }
-            page.continueButton.click();
-            Selenide.sleep(2000);
         }
+
+        // Clicar Continue via JS para evitar bloqueio do backdrop Angular Material
+        executeJavaScript(
+            "var btns = document.querySelectorAll('mat-dialog-container button');" +
+            "for (var i = 0; i < btns.length; i++) {" +
+            "  if (btns[i].textContent.toLowerCase().indexOf('continue') >= 0) {" +
+            "    btns[i].click(); break;" +
+            "  }" +
+            "}"
+        );
+        Selenide.sleep(4000);
 
         String url = WebDriverRunner.url();
         Assertions.assertFalse(
             url.endsWith("/battleship"),
-            "URL deve mudar para o lobby da partida com amigo. URL atual: " + url
+            "URL deve mudar para a página do jogo contra o robô. URL atual: " + url
         );
     }
 }

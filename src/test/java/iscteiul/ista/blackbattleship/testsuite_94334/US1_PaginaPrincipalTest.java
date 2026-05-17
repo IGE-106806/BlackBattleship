@@ -1,17 +1,16 @@
-package iscteiul.ista.blackbattleship.IGE_94334;
+package iscteiul.ista.blackbattleship.testsuite_94334;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
+import iscteiul.ista.blackbattleship.testsuite_94334.pages.US1_PaginaPrincipalPage;
 import org.junit.jupiter.api.*;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
-public class US8_VerRegrasTest {
-
-    US8_VerRegrasPage page = new US8_VerRegrasPage();
+public class US1_PaginaPrincipalTest {
 
     @BeforeAll
     public static void setUpAll() {
@@ -37,13 +36,15 @@ public class US8_VerRegrasTest {
         Selenide.sleep(1000);
     }
 
-    // US8 – Como jogador, quero ver as regras do jogo para perceber como jogar
-    @Test
-    public void us8_verRegrasDoJogo() {
-        // As regras estão a cerca de metade da página principal
-        executeJavaScript("window.scrollTo(0, document.body.scrollHeight / 2)");
-        Selenide.sleep(1500);
+    US1_PaginaPrincipalPage page = new US1_PaginaPrincipalPage();
 
-        page.howToPlaySection.shouldBe(visible);
+    // US1 – Como jogador, quero aceder à página principal do jogo para poder começar a jogar
+    @Test
+    public void us1_paginaPrincipalCarrega() {
+        Assertions.assertTrue(
+            Selenide.title().toLowerCase().contains("battleship"),
+            "Título da página deve conter 'Battleship'"
+        );
+        page.gameTitle.shouldBe(visible);
     }
 }

@@ -1,4 +1,4 @@
-package iscteiul.ista.blackbattleship.IGE_94334;
+package iscteiul.ista.blackbattleship.testsuite_94334.pages;
 
 import com.codeborne.selenide.SelenideElement;
 
