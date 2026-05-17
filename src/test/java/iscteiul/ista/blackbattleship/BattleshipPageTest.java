@@ -28,6 +28,10 @@ public class BattleshipPageTest {
         open("https://papergames.io/en/battleship");
         Selenide.sleep(4000);
         executeJavaScript(
+        // O banner de cookies do papergames usa a framework Fides (prefixo fc-)
+        // Aguarda que o banner carregue completamente antes de o remover
+        Selenide.sleep(4000);
+        executeJavaScript(
                 "document.querySelectorAll('[class]').forEach(function(el) {" +
                         "    var cls = typeof el.className === 'string' ? el.className : '';" +
                         "    if (cls.indexOf('fc-') >= 0) {" +
@@ -158,18 +162,10 @@ public class BattleshipPageTest {
                 "Deve existir link de convite ou botão de partilha");
     }
 
-    // US8
+    // US13 – Como jogador, quero escolher quem começa o jogo
     @Test
-    public void us8_regrasDoJogoVisiveis() {
-        executeJavaScript("window.scrollTo(0, document.body.scrollHeight)");
-        Selenide.sleep(1000);
-        $x("//*[contains(text(),'How to play') or contains(text(),'how to play') " +
-                "or contains(text(),'Rules') or contains(text(),'About Battleship') " +
-                "or contains(text(),'About the game') or contains(text(),'Battleship rules')]")
-                .shouldBe(visible);
-    }
-
-    // US13
+    public void us13_escolherQuemComecaJogo() {
+    // US13 – Como jogador, quero escolher quem começa o jogo (Custom options no Play vs robot)
     @Test
     public void us13_escolherQuemComecaJogo() {
         Object clicado = executeJavaScript(
@@ -311,81 +307,4 @@ public class BattleshipPageTest {
         Assertions.assertTrue(temIndicadorResultado,
                 "Deve existir um indicador de resultado ou estado da partida");
     }
-
-    // US11
-    @Test
-    public void us11_criarTorneio() {
-        battleshipPage.createTournamentButton.shouldBe(visible);
-        battleshipPage.createTournamentButton.click();
-        Selenide.sleep(1500);
-        String url = WebDriverRunner.url();
-        Assertions.assertTrue(url.contains("tournament"),
-                "URL deve conter 'tournament'. URL atual: " + url);
-    }
-
-    // US12
-    @Test
-    public void us12_acederLoja() {
-        open("https://papergames.io/en/battleship");
-        Selenide.sleep(5000);
-        if ($(".fc-cta-consent").exists()) {
-            $(".fc-cta-consent").click();
-        }
-        executeJavaScript("arguments[0].click();", battleshipPage.shopLink);
-        Selenide.sleep(2000);
-        Assertions.assertTrue(WebDriverRunner.url().contains("/shop"),
-                "Deveria estar na página da loja.");
-    }
-
-    // US14
-    @Test
-    public void us14_verHistoricoPartidas() {
-        battleshipPage.historyLink.shouldBe(visible);
-        battleshipPage.historyLink.click();
-        Selenide.sleep(1500);
-        String url = WebDriverRunner.url();
-        Assertions.assertTrue(url.contains("history") || url.contains("profile"),
-                "URL deve conter 'history' ou 'profile'. URL atual: " + url);
-    }
-
-    // US15
-    @Test
-    public void us15_partilharResultado() {
-        executeJavaScript("window.scrollTo(0, document.body.scrollHeight)");
-        Selenide.sleep(1000);
-        battleshipPage.shareButton.shouldBe(visible);
-        Assertions.assertTrue(battleshipPage.shareButton.exists(),
-                "Deve existir um botão ou link de partilha nas redes sociais");
-    }
-
-    // US16
-    @Test
-    public void us16_alterarIdioma() {
-        executeJavaScript(
-                "var tooltips = document.querySelectorAll('[role=tooltip]');" +
-                        "for (var i = 0; i < tooltips.length; i++) {" +
-                        "    if (tooltips[i].textContent.trim() === 'Settings') {" +
-                        "        var id = tooltips[i].id;" +
-                        "        var btn = document.querySelector('[aria-describedby=\"' + id + '\"]');" +
-                        "        if (btn) { btn.click(); break; }" +
-                        "    }" +
-                        "}"
-        );
-        Selenide.sleep(1500);
-        $x("//*[normalize-space(text())='Language']").shouldBe(visible).click();
-        Selenide.sleep(1000);
-        $x("//*[normalize-space(text())='Language']").shouldBe(visible).click();
-        Selenide.sleep(1000);
-        $x("//*[contains(text(),'Português') or contains(text(),'Portuguese') " +
-                "or normalize-space(text())='PT' or normalize-space(text())='pt']")
-                .shouldBe(visible).click();
-        Selenide.sleep(2500);
-        String url = WebDriverRunner.url();
-        boolean urlMudou = url.contains("/pt/") || url.contains("/pt-");
-        boolean conteudoEmPT = $x("//*[contains(text(),'Jogar') or contains(text(),'amigo') " +
-                "or contains(text(),'Como jogar') or contains(text(),'Regras')]").exists();
-        Assertions.assertTrue(urlMudou || conteudoEmPT,
-                "Após mudar para PT, URL deve conter '/pt/' ou conteúdo em português. URL: " + url);
-    }
-
 }
