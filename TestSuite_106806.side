@@ -1,0 +1,351 @@
+{
+  "id": "f3a92c01-106806-4e2a-b8d1-106806abcdef",
+  "version": "2.0",
+  "name": "TestSuite_106806",
+  "url": "https://papergames.io/en/battleship",
+  "tests": [{
+    "id": "us6-106806-1111-1111-111111111111",
+    "name": "UserStoryTest6",
+    "commands": [{
+      "id": "us6-cmd1-0001",
+      "comment": "Abrir página principal do Battleship",
+      "command": "open",
+      "target": "https://papergames.io/en/battleship",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us6-cmd2-0002",
+      "comment": "Definir tamanho da janela",
+      "command": "setWindowSize",
+      "target": "1280x800",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us6-cmd3-0003",
+      "comment": "Remover banners de cookies (fc-)",
+      "command": "executeScript",
+      "target": "document.querySelectorAll('[class]').forEach(function(el){var cls=typeof el.className==='string'?el.className:'';if(cls.indexOf('fc-')>=0){el.style.display='none';try{el.remove();}catch(e){}}});",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us6-cmd4-0004",
+      "comment": "Clicar em Play vs Robot",
+      "command": "click",
+      "target": "css=app-juicy-button:nth-child(2) button",
+      "targets": [
+        ["css=app-juicy-button:nth-child(2) button", "css:finder"],
+        ["xpath=//button[contains(.,'Play vs robot')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "us6-cmd5-0005",
+      "comment": "Aguardar carregamento do modal",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us6-cmd6-0006",
+      "comment": "Preencher nickname se solicitado",
+      "command": "executeScript",
+      "target": "var inp=document.querySelector('input[placeholder*=name],input[placeholder*=nick],input[placeholder*=user]'); if(inp){inp.value='TestPlayer106806'; inp.dispatchEvent(new Event('input',{bubbles:true}));}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us6-cmd7-0007",
+      "comment": "Clicar em Continue",
+      "command": "executeScript",
+      "target": "var btns=document.querySelectorAll('button'); for(var i=0;i<btns.length;i++){if(btns[i].textContent.trim().toLowerCase().indexOf('continue')>=0){btns[i].click();break;}}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us6-cmd8-0008",
+      "comment": "Aguardar carregamento do jogo",
+      "command": "pause",
+      "target": "3000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us6-cmd9-0009",
+      "comment": "Clicar em Auto Place para colocar navios automaticamente",
+      "command": "executeScript",
+      "target": "var btns=document.querySelectorAll('button'); for(var i=0;i<btns.length;i++){if(btns[i].textContent.toLowerCase().indexOf('auto')>=0||btns[i].textContent.toLowerCase().indexOf('random')>=0){btns[i].click();break;}}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us6-cmd10-0010",
+      "comment": "Verificar que tabuleiro tem navios colocados",
+      "command": "assertElementPresent",
+      "target": "css=.opponent",
+      "targets": [
+        ["css=.opponent", "css:finder"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "us7-106806-2222-2222-222222222222",
+    "name": "UserStoryTest7",
+    "commands": [{
+      "id": "us7-cmd1-0001",
+      "comment": "Abrir página principal do Battleship",
+      "command": "open",
+      "target": "https://papergames.io/en/battleship",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us7-cmd2-0002",
+      "comment": "Definir tamanho da janela",
+      "command": "setWindowSize",
+      "target": "1280x800",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us7-cmd3-0003",
+      "comment": "Remover banners de cookies",
+      "command": "executeScript",
+      "target": "document.querySelectorAll('[class]').forEach(function(el){var cls=typeof el.className==='string'?el.className:'';if(cls.indexOf('fc-')>=0){el.style.display='none';try{el.remove();}catch(e){}}});",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us7-cmd4-0004",
+      "comment": "Clicar em Play vs Robot",
+      "command": "executeScript",
+      "target": "var btns=document.querySelectorAll('button'); for(var i=0;i<btns.length;i++){if(btns[i].textContent.toLowerCase().indexOf('robot')>=0){btns[i].click();break;}}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us7-cmd5-0005",
+      "comment": "Aguardar e preencher nickname",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us7-cmd6-0006",
+      "comment": "Preencher nickname e continuar",
+      "command": "executeScript",
+      "target": "var inp=document.querySelector('input[placeholder*=name],input[placeholder*=nick],input[placeholder*=user]'); if(inp){inp.value='TestPlayer106806';inp.dispatchEvent(new Event('input',{bubbles:true}));}; var btns=document.querySelectorAll('button'); for(var i=0;i<btns.length;i++){if(btns[i].textContent.trim().toLowerCase().indexOf('continue')>=0){btns[i].click();break;}}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us7-cmd7-0007",
+      "comment": "Aguardar carregamento do jogo",
+      "command": "pause",
+      "target": "3000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us7-cmd8-0008",
+      "comment": "Colocar navios automaticamente",
+      "command": "executeScript",
+      "target": "var btns=document.querySelectorAll('button'); for(var i=0;i<btns.length;i++){if(btns[i].textContent.toLowerCase().indexOf('auto')>=0||btns[i].textContent.toLowerCase().indexOf('random')>=0){btns[i].click();break;}}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us7-cmd9-0009",
+      "comment": "Aguardar início do jogo",
+      "command": "pause",
+      "target": "3000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us7-cmd10-0010",
+      "comment": "Disparar numa célula do tabuleiro adversário",
+      "command": "executeScript",
+      "target": "var celulas=document.querySelectorAll('.opponent td'); for(var i=0;i<celulas.length;i++){var cls=celulas[i].className||''; if(cls.indexOf('hit')<0&&cls.indexOf('miss')<0){celulas[i].click();break;}} return true;",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us7-cmd11-0011",
+      "comment": "Verificar que o tabuleiro adversário está presente após disparo",
+      "command": "assertElementPresent",
+      "target": "css=.opponent",
+      "targets": [
+        ["css=.opponent", "css:finder"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "us9-106806-3333-3333-333333333333",
+    "name": "UserStoryTest9",
+    "commands": [{
+      "id": "us9-cmd1-0001",
+      "comment": "Abrir página principal do Battleship",
+      "command": "open",
+      "target": "https://papergames.io/en/battleship",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us9-cmd2-0002",
+      "comment": "Definir tamanho da janela",
+      "command": "setWindowSize",
+      "target": "1280x800",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us9-cmd3-0003",
+      "comment": "Remover banners de cookies",
+      "command": "executeScript",
+      "target": "document.querySelectorAll('[class]').forEach(function(el){var cls=typeof el.className==='string'?el.className:'';if(cls.indexOf('fc-')>=0){el.style.display='none';try{el.remove();}catch(e){}}});",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us9-cmd4-0004",
+      "comment": "Iniciar jogo contra robot",
+      "command": "executeScript",
+      "target": "var btns=document.querySelectorAll('button'); for(var i=0;i<btns.length;i++){if(btns[i].textContent.toLowerCase().indexOf('robot')>=0){btns[i].click();break;}}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us9-cmd5-0005",
+      "comment": "Preencher nickname e continuar",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us9-cmd6-0006",
+      "comment": "Preencher dados e continuar",
+      "command": "executeScript",
+      "target": "var inp=document.querySelector('input[placeholder*=name],input[placeholder*=nick],input[placeholder*=user]'); if(inp){inp.value='TestPlayer106806';inp.dispatchEvent(new Event('input',{bubbles:true}));}; var btns=document.querySelectorAll('button'); for(var i=0;i<btns.length;i++){if(btns[i].textContent.trim().toLowerCase().indexOf('continue')>=0){btns[i].click();break;}}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us9-cmd7-0007",
+      "comment": "Aguardar carregamento",
+      "command": "pause",
+      "target": "3000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us9-cmd8-0008",
+      "comment": "Verificar presença do ícone de chat (fa-comment)",
+      "command": "assertElementPresent",
+      "target": "css=.fa-comment",
+      "targets": [
+        ["css=.fa-comment", "css:finder"],
+        ["xpath=//*[contains(@class,'fa-comment')]", "xpath:attributes"]
+      ],
+      "value": ""
+    }, {
+      "id": "us9-cmd9-0009",
+      "comment": "Clicar no botão de chat",
+      "command": "executeScript",
+      "target": "var btn=document.querySelector('button .fa-comment'); if(btn){btn.closest('button').click();}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us9-cmd10-0010",
+      "comment": "Aguardar abertura do chat",
+      "command": "pause",
+      "target": "1500",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us9-cmd11-0011",
+      "comment": "Escrever mensagem no chat",
+      "command": "executeScript",
+      "target": "var inp=document.querySelector('input[type=text]'); if(inp&&inp.offsetParent!==null){inp.value='Boa sorte!';inp.dispatchEvent(new Event('input',{bubbles:true}));}",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "us10-106806-4444-4444-444444444444",
+    "name": "UserStoryTest10",
+    "commands": [{
+      "id": "us10-cmd1-0001",
+      "comment": "Abrir página principal do Battleship",
+      "command": "open",
+      "target": "https://papergames.io/en/battleship",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us10-cmd2-0002",
+      "comment": "Definir tamanho da janela",
+      "command": "setWindowSize",
+      "target": "1280x800",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us10-cmd3-0003",
+      "comment": "Remover banners de cookies",
+      "command": "executeScript",
+      "target": "document.querySelectorAll('[class]').forEach(function(el){var cls=typeof el.className==='string'?el.className:'';if(cls.indexOf('fc-')>=0){el.style.display='none';try{el.remove();}catch(e){}}});",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us10-cmd4-0004",
+      "comment": "Iniciar jogo contra robot",
+      "command": "executeScript",
+      "target": "var btns=document.querySelectorAll('button'); for(var i=0;i<btns.length;i++){if(btns[i].textContent.toLowerCase().indexOf('robot')>=0){btns[i].click();break;}}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us10-cmd5-0005",
+      "comment": "Aguardar modal",
+      "command": "pause",
+      "target": "2000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us10-cmd6-0006",
+      "comment": "Preencher nickname e continuar",
+      "command": "executeScript",
+      "target": "var inp=document.querySelector('input[placeholder*=name],input[placeholder*=nick],input[placeholder*=user]'); if(inp){inp.value='TestPlayer106806';inp.dispatchEvent(new Event('input',{bubbles:true}));}; var btns=document.querySelectorAll('button'); for(var i=0;i<btns.length;i++){if(btns[i].textContent.trim().toLowerCase().indexOf('continue')>=0){btns[i].click();break;}}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us10-cmd7-0007",
+      "comment": "Aguardar carregamento do jogo",
+      "command": "pause",
+      "target": "3000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us10-cmd8-0008",
+      "comment": "Colocar navios automaticamente",
+      "command": "executeScript",
+      "target": "var btns=document.querySelectorAll('button'); for(var i=0;i<btns.length;i++){if(btns[i].textContent.toLowerCase().indexOf('auto')>=0||btns[i].textContent.toLowerCase().indexOf('random')>=0){btns[i].click();break;}}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us10-cmd9-0009",
+      "comment": "Aguardar início do jogo",
+      "command": "pause",
+      "target": "3000",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us10-cmd10-0010",
+      "comment": "Verificar indicadores de estado/resultado da partida",
+      "command": "executeScript",
+      "target": "return document.querySelector('.score')!==null || document.querySelector('.current-player')!==null || document.querySelector('.chronometer')!==null;",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "us10-cmd11-0011",
+      "comment": "Verificar que o tabuleiro do jogo está visível",
+      "command": "assertElementPresent",
+      "target": "css=.opponent",
+      "targets": [
+        ["css=.opponent", "css:finder"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "suite-106806-0000-0000-000000000000",
+    "name": "TestSuite_106806",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": [
+      "us6-106806-1111-1111-111111111111",
+      "us7-106806-2222-2222-222222222222",
+      "us9-106806-3333-3333-333333333333",
+      "us10-106806-4444-4444-444444444444"
+    ]
+  }],
+  "urls": ["https://papergames.io/en/battleship"],
+  "plugins": []
+}
