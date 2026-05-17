@@ -2,7 +2,9 @@
 
 ## Identificação do Grupo
 - José Caldeira
-- Alexandre Mira
+- Alexandre Mira 123015
+- Pedro Santana
+- Francisco Santos
 
 ---
 
